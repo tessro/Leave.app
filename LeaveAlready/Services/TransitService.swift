@@ -83,7 +83,8 @@ class TransitService: ObservableObject {
     }
 
     private func parseDepartures(from response: APIResponse, for route: ActiveRoute) -> [Departure] {
-        guard let visits = response.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit else {
+        guard let delivery = response.ServiceDelivery.StopMonitoringDelivery.first,
+              let visits = delivery.MonitoredStopVisit else {
             return []
         }
 

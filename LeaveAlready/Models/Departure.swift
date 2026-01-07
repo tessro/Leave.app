@@ -37,7 +37,7 @@ struct APIResponse: Codable {
 }
 
 struct ServiceDelivery: Codable {
-    let StopMonitoringDelivery: StopMonitoringDelivery
+    let StopMonitoringDelivery: [StopMonitoringDelivery]
 }
 
 struct StopMonitoringDelivery: Codable {
