@@ -156,20 +156,37 @@ enum TransitError: LocalizedError {
 
 // MARK: - Stops API Response
 
-struct StopsResponse: Codable {
+struct StopsResponse: Decodable {
     let Contents: StopsContents?
     let Siri: SiriStops?
 }
 
-struct StopsContents: Codable {
+struct StopsContents: Decodable {
     let dataObjects: StopsDataObjects?
 }
 
-struct StopsDataObjects: Codable {
-    let ScheduledStopPoint: [ScheduledStopPoint]?
+struct StopsDataObjects: Decodable {
+    let ScheduledStopPoint: [ScheduledStopPointData]?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        // Handle both single object and array responses from the API
+        if let array = try? container.decode([ScheduledStopPointData].self, forKey: .scheduledStopPoint) {
+            ScheduledStopPoint = array
+        } else if let single = try? container.decode(ScheduledStopPointData.self, forKey: .scheduledStopPoint) {
+            ScheduledStopPoint = [single]
+        } else {
+            ScheduledStopPoint = nil
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case scheduledStopPoint = "ScheduledStopPoint"
+    }
 }
 
-struct ScheduledStopPoint: Codable {
+struct ScheduledStopPointData: Codable {
     let id: String?
     let Name: String?
     let Location: StopLocation?
@@ -180,31 +197,48 @@ struct StopLocation: Codable {
     let Latitude: String?
 }
 
-struct SiriStops: Codable {
+struct SiriStops: Decodable {
     let ServiceDelivery: SiriStopsServiceDelivery?
 }
 
-struct SiriStopsServiceDelivery: Codable {
+struct SiriStopsServiceDelivery: Decodable {
     let DataObjectDelivery: DataObjectDelivery?
 }
 
-struct DataObjectDelivery: Codable {
+struct DataObjectDelivery: Decodable {
     let dataObjects: SiriDataObjects?
 }
 
-struct SiriDataObjects: Codable {
+struct SiriDataObjects: Decodable {
     let SiteFrame: SiteFrame?
 }
 
-struct SiteFrame: Codable {
+struct SiteFrame: Decodable {
     let stopPlaces: StopPlacesWrapper?
 }
 
-struct StopPlacesWrapper: Codable {
-    let StopPlace: [StopPlace]?
+struct StopPlacesWrapper: Decodable {
+    let StopPlace: [StopPlaceData]?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        // Handle both single object and array responses from the API
+        if let array = try? container.decode([StopPlaceData].self, forKey: .stopPlace) {
+            StopPlace = array
+        } else if let single = try? container.decode(StopPlaceData.self, forKey: .stopPlace) {
+            StopPlace = [single]
+        } else {
+            StopPlace = nil
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case stopPlace = "StopPlace"
+    }
 }
 
-struct StopPlace: Codable {
+struct StopPlaceData: Codable {
     let id: String?
     let Name: String?
     let Centroid: Centroid?
@@ -340,17 +374,34 @@ extension TransitService {
 
 // MARK: - Lines API Response
 
-struct LinesResponse: Codable {
+struct LinesResponse: Decodable {
     let Contents: LinesContents?
     let Siri: SiriLines?
 }
 
-struct LinesContents: Codable {
+struct LinesContents: Decodable {
     let dataObjects: LinesDataObjects?
 }
 
-struct LinesDataObjects: Codable {
+struct LinesDataObjects: Decodable {
     let Line: [LineData]?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        // Handle both single object and array responses from the API
+        if let array = try? container.decode([LineData].self, forKey: .Line) {
+            Line = array
+        } else if let single = try? container.decode(LineData.self, forKey: .Line) {
+            Line = [single]
+        } else {
+            Line = nil
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case Line
+    }
 }
 
 struct LineData: Codable {
@@ -360,26 +411,43 @@ struct LineData: Codable {
     let PublicCode: String?
 }
 
-struct SiriLines: Codable {
+struct SiriLines: Decodable {
     let ServiceDelivery: SiriLinesServiceDelivery?
 }
 
-struct SiriLinesServiceDelivery: Codable {
+struct SiriLinesServiceDelivery: Decodable {
     let DataObjectDelivery: LinesDataObjectDelivery?
 }
 
-struct LinesDataObjectDelivery: Codable {
+struct LinesDataObjectDelivery: Decodable {
     let dataObjects: SiriLinesDataObjects?
 }
 
-struct SiriLinesDataObjects: Codable {
+struct SiriLinesDataObjects: Decodable {
     let ServiceFrame: ServiceFrame?
 }
 
-struct ServiceFrame: Codable {
+struct ServiceFrame: Decodable {
     let lines: LinesWrapper?
 }
 
-struct LinesWrapper: Codable {
+struct LinesWrapper: Decodable {
     let Line: [LineData]?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        // Handle both single object and array responses from the API
+        if let array = try? container.decode([LineData].self, forKey: .Line) {
+            Line = array
+        } else if let single = try? container.decode(LineData.self, forKey: .Line) {
+            Line = [single]
+        } else {
+            Line = nil
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case Line
+    }
 }

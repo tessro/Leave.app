@@ -32,11 +32,11 @@ struct Departure: Identifiable, Equatable {
     }
 }
 
-struct APIResponse: Codable {
+struct APIResponse: Decodable {
     let ServiceDelivery: ServiceDelivery
 }
 
-struct ServiceDelivery: Codable {
+struct ServiceDelivery: Decodable {
     let StopMonitoringDelivery: [StopMonitoringDeliveryItem]
 
     init(from decoder: Decoder) throws {
@@ -57,7 +57,7 @@ struct ServiceDelivery: Codable {
     }
 }
 
-struct StopMonitoringDeliveryItem: Codable {
+struct StopMonitoringDeliveryItem: Decodable {
     let MonitoredStopVisit: [MonitoredStopVisitItem]?
 
     init(from decoder: Decoder) throws {
@@ -78,11 +78,11 @@ struct StopMonitoringDeliveryItem: Codable {
     }
 }
 
-struct MonitoredStopVisitItem: Codable {
+struct MonitoredStopVisitItem: Decodable {
     let MonitoredVehicleJourney: MonitoredVehicleJourney
 }
 
-struct MonitoredVehicleJourney: Codable {
+struct MonitoredVehicleJourney: Decodable {
     let LineRef: String?
     let PublishedLineName: String?
     let DestinationName: String?
@@ -90,7 +90,7 @@ struct MonitoredVehicleJourney: Codable {
     let Monitored: Bool?
 }
 
-struct MonitoredCall: Codable {
+struct MonitoredCall: Decodable {
     let ExpectedDepartureTime: String?
     let AimedDepartureTime: String?
     let ExpectedArrivalTime: String?
